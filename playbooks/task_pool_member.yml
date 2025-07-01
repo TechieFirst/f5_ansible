@@ -1,0 +1,14 @@
+---
+- name: Combine Server auth and creation dict
+  set_fact:
+    new_dict: "{{ item | ansible.builtin.combine({'provider': provider }) }}"
+# - debug: msg="{{ new_dict }}"     
+
+- name: Pool Member update
+  include_tasks: ../playbooks/subtask_pool_member.yml
+  loop: "{{ new_dict.action }}"
+  loop_control:
+    loop_var: action_pool  
+  
+  
+  

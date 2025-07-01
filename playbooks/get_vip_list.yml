@@ -1,0 +1,148 @@
+---
+  - name: VIP Validation Task
+    hosts: f5_servers
+    gather_facts: false
+    vars:
+      today: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
+      logdir: /home/ubuntu/f5/f5_ansible/logs
+      logfilename: "vip_status.log"
+      log_file: "{{ logdir }}/{{ logfilename }}"
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_ssh_pass }}"
+        server_port: 443
+        validate_certs: false
+    vars_files:
+      - ../config_files/vip_validation.yaml
+    tags: vip_validation
+    tasks:   
+      - name: Exit if f5 is NOT active
+        meta: end_host
+        when:
+          - is_f5_active == false
+          
+      - name: Gather F5 virtual server facts
+        f5networks.f5_modules.bigip_device_info:
+          provider: "{{ provider }}"
+          gather_subset:
+            - virtual-servers
+        register: vip_list
+      
+      - name: Get Partition name
+        set_fact:
+          partition : "{{ vip_validation.partition }}"
+
+      - name: Get Partition name
+        debug:
+          msg : "{{ partition }}"
+
+      - name: Check if vip_name list has 'all'
+        set_fact:
+          all_vips: true
+        loop: "{{ vip_validation.vip_name }}"  
+        when: item == "all"
+
+      - name: Ensure log directory exists
+        file:
+          path: "{{ logdir }}"
+          state: directory
+          mode: '0755'
+
+      - name: Create empty log file with date and time in filename
+        file:
+          path: "{{ log_file }}"
+          state: touch
+          mode: '0644'
+      
+      - name: Write result to log
+        lineinfile:
+          path: "{{ log_file }}"
+          line: >
+                "################## VIP Validation Result ##################"
+          insertafter: EOF
+
+      - name: Extract availability state for VIP
+        include_tasks: ../playbooks/task_vip_status.yaml
+        loop: "{{ vip_validation.vip_name }}" 
+        loop_control:
+          loop_var: vip    
+        when: all_vips is undefined
+      
+      - name: Log file path
+        debug:
+          msg: "VIP status in log file -  {{ log_file }}"
+        when: all_vips is undefined
+        
+      - name: Exit if all VIP status needed
+        meta: end_host
+        when: all_vips is undefined
+
+      - name: Extract availability state for ALL VIP
+        include_tasks: ../playbooks/task_vip_status_all.yaml
+        loop: "{{ vip_list.ansible_facts.ansible_net_virtual_servers }}"
+        loop_control:
+          loop_var: vip
+        no_log: true
+        when: all_vips is defined
+
+      - name: Log file path
+        debug:
+          msg: "VIP status in log file -  {{ log_file }}"
+      # - lineinfile:
+      #     line: "{{ item }}"
+      #     path: "{{ logfile }}"
+      #     insertafter: "EOF"
+      #   loop: 
+      #     - "{{ vip_result }}"
+      #   delegate_to: localhost
+
+
+      # - name: Get vip_name from vip_validation.yml vars_file
+      #   set_fact: 
+      #     vip_names : "{{ vip_validation.vip_name | list }}"
+
+      # - name: Extract availability state for VIP {{ vip_name }}
+      #   debug:
+      #     msg: "{{ item }}"
+      #   loop: "{{ vip_validation.vip_name }}"        
+
+
+        ####vip_validation.partition/vip_validation.vip_name
+        # loop:
+        #   - " {{ vip_validation.vip_name }}"
+
+      # - name: Test  
+      #   debug:
+      #     msg: "{{ vip_details }}"          
+
+      
+            # loop: "{{ vip_details }}"
+            # loop_control:
+            #   label: "{{ item.name }}"
+          
+    # - name: Print VIP State
+    #   loop: "{{ vip_list.virtual_servers }}"
+    #   loop_control:
+    #     label: "{{ item.name}}"
+    #   # debug:
+    #   #   msg: "VIP Status of {{ item.name}} - {{ item.availability_status }}"
+    #   copy:
+    #     content: "VIP Status of {{ item.name}} - {{ item.availability_status }}"
+    #     dest: "./task_output.log"
+    #   #with_items: "{{ vip_list.virtual_servers }}"
+    #   when: 
+    #     - log_enabled
+    #     - vip_validation.vip_name
+
+
+      # - name: Create nested groups
+      #   loop: "{{ vip_list.virtual_servers }}"
+      #   loop_control:
+      #     label: "{{ item.name}}"
+      #   ansible.builtin.group_by:
+      #     key: "{{ item.availability_status }}"
+
+      # - name: Display dynamically created groups
+      #   debug:
+      #     var: groups

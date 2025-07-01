@@ -1,0 +1,83 @@
+---
+  - name: Verify F5 status - Active or Standalone
+    hosts: f5_servers
+    gather_facts: false
+    vars:
+      today: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
+      logdir: /home/ubuntu/f5/f5_ansible/logs
+      logfilename: "vip_status.log"
+      log_file: "{{ logdir }}/{{ logfilename }}"
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_ssh_pass }}"
+        server_port: 443
+        validate_certs: false
+    vars_files:
+      - ../config_files/vip_validation.yaml
+    tags: always
+
+    tasks:
+    - name: Run show sys failover command
+      bigip_command:
+        commands:
+          - "show sys failover"
+        provider: "{{ provider }}"
+      register: ha_status_output
+
+    - name: Show sys failover output
+      debug:
+        msg: "{{ ha_status_output.stdout[0] }}"
+
+    - name: Set active_status fact
+      set_fact:
+        is_f5_active: "{{ 'active' in ha_status_output.stdout[0] or 'standalone' in ha_status_output.stdout[0] }}"
+
+    - name: F5 is not active
+      debug:
+        msg: "The F5 device is NOT ACTIVE. Update inventory file with active/standalone F5 IP."
+      when: is_f5_active ==  false
+
+    - name: Get F5 device groups
+      f5networks.f5_modules.bigip_device_info:
+        provider: "{{ provider }}"
+        gather_subset:
+        - device-groups
+      register: dg
+
+    - name: Get Device group name and Auto-Sync status
+      set_fact:
+        dg_name: "{{ item.name }}"
+        autosync_enabled: "{{ item.autosync_enabled }}"
+      loop: "{{ dg.ansible_facts.ansible_net_device_groups}}"  
+      when: 
+      - "'device_trust_group' not in item.name"
+      - "'gtm' not in item.name"
+    - debug: msg="Device Grop - {{ dg_name }} and AutoSync status - {{ autosync_enabled }}"   
+
+
+    # - name: Run TMSH command to list device groups
+    #   bigip_command:
+    #     provider: "{{ provider }}"
+    #     commands:
+    #       - "tmsh list cm device-group"
+    #   register: device_group_output
+
+    # - name: Show device group names
+    #   set_fact:
+    #     dg: >-
+    #       {% if 'cm device-group' in item %}
+    #       {{ item }}
+    #       {% endif %}
+    #   loop: "{{ device_group_output.stdout_lines[0] | list}}"
+    #   when: "'cm device-group' in item"
+
+    # - name: show device_group
+    #   debug:
+    #     msg: "{{ item.split('cm device-group ')[1].split(' {')[0] }}"
+    #   loop: "{{ device_group_output.stdout_lines[0] | list}}"
+    #   when: 
+    #   - "'cm device-group' in item"
+    #   - "'device_trust_group' not in item"
+    #   - "'gtm' not in item"
+
