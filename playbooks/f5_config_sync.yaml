@@ -16,7 +16,8 @@
     vars_files:
       - ../config_files/vip_validation.yaml
     tags: always
-
+    collections:
+      f5networks.f5_modules
     tasks:
     - name: Run show sys failover command
       bigip_command:
