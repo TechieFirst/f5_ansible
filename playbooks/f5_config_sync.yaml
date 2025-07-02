@@ -20,7 +20,7 @@
       f5networks.f5_modules
     tasks:
     - name: Run show sys failover command
-      bigip_command:
+      f5networks.f5_modules.bigip_command:
         commands:
           - "show sys failover"
         provider: "{{ provider }}"
