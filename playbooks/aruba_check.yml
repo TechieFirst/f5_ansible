@@ -9,4 +9,4 @@
       register: facts_out
     - name: Print facts summary
       debug:
-        var: facts_out.ansible_facts.net_model
+        msg: facts_out.ansible_facts.net_model
