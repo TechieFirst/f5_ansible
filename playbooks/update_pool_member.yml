@@ -1,0 +1,39 @@
+---
+  - name: Pool Modification Task
+    hosts: f5_servers
+    gather_facts: false
+    collections:
+    - f5networks.f5_modules
+    vars:
+      today: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
+      logdir: /home/ubuntu/f5/f5_ansible/logs
+      logfilename: "vip_status.log"
+      log_file: "{{ logdir }}/{{ logfilename }}"
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_ssh_pass }}"
+        server_port: 443
+        validate_certs: false
+    vars_files:
+      - ../config_files/pool_modification.yaml
+    tags: pool_modification
+    
+    tasks: 
+
+      - name: Exit if f5 is NOT active
+        meta: end_host
+        when:
+          - is_f5_active == false
+
+      - name: Pool Member Update
+        include_tasks: ../playbooks/task_pool_member.yml
+        loop: "{{ pool_modification }}"
+
+    handlers:
+      - name: Config Sync (Manual Only)
+        bigip_configsync_action:
+          device_group: device_group1
+          sync_device_to_group: yes
+          provider: "{{ provider }}"
+        when: not autosync_enabled 

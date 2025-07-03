@@ -1,0 +1,11 @@
+- hosts: localhost
+  vars_prompt:
+    - name: secret_value
+      prompt: "Enter the secret value"
+      private: yes  # Hides input for security
+
+  tasks:
+    - name: Save input to a temporary file
+      copy:
+        content: "{{ secret_value }}"
+        dest: "/tmp/password.txt"
