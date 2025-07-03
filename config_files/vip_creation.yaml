@@ -1,0 +1,124 @@
+############################################################################################################################
+#                                    Basic Configuration for VIP creation                                                  #
+#          Edit below configuration as per requirement (Comment out(preppend with #) for non-requird config)               #
+############################################################################################################################
+---
+vip_creation:
+  vip:
+    - name: "VIP_106"   #The name of the virtual server.
+      partition: "Common" #The partition where the virtual server resides.
+      description: "Test-VIP creation" #A textual description of the virtual server.
+      destination: "192.168.100.15:80" #The IP address and port (e.g., 10.1.1.1:80) that the virtual server listens on.
+      mask: '255.255.255.255'   #The subnet mask for the destination IP.
+      source: '0.0.0.0/0'  #The source IP address range (e.g., 0.0.0.0/0) that the virtual server accepts connections from.
+      pool: "demo_pool"    #The name of the pool to which traffic is directed.
+      ip_protocol: 'tcp' #Ansible param ....Specifies the IP protocol for which you want the virtual server to direct traffic. Sample protocol names are tcp and udp.
+      snat: '/Common/test_snat_pool' #Options: automap/<name of snat pool>/none. Enable or disable SNAT automap for the virtual server. DEPRECATED - see Virtual Server Property Groups source-address-translation
+      
+
+      profiles:   
+        - name: "f5-tcp-lan" 
+          context: "clientside" #Protocol Profile (Client). 
+        - name: "f5-tcp-progressive"
+          context: "serverside"  #Protocol Profile (Server)
+        - name: "http"    #Default context=all applies
+        # - name: "clientssl"
+        #   context: "clientside"  
+        # - name: "serverssl" 
+        #   context: "serverside"  
+        # - name: "request-log"       
+
+      ###################################################################################################################################
+      #                                 Optional - Advanced Configuration for VIP creation                                              #
+      #                         Uncomment the required configuration to include for VIP creation                                        #
+      ###################################################################################################################################
+
+
+      # address_translation: 'yes'   #Options: Yes/No. Default-Yes
+      # auto_last_hop: 'default'     #Options: default/enabled/disabled
+      # bypass_module_checks:    #Options: no/yes
+      # check_profiles: 'no'    #Options: yes/no
+      # disabled_vlans:   #List of VLANs to be disabled.
+      # enabled_vlans: #List of VLANs to enable.
+      # fallback_persistence_profile:  #Specifies a fallback persistence profile for the virtual server to use when the default persistence profile is not available.
+      # firewall_enforced_policy: #Applies the specified AFM policy to the virtual in an enforcing way.
+      # firewall_staged_policy: #Staged firewall policy.
+      # insert_metadata: #Options: no/yes
+      # ip_intelligence_policy:   #The name of the IP Intelligence policy to attach.
+      # irules: #	Specifies a list of rules to be applied in priority order.
+      # metadata: #Arbitrary key/value pairs you can attach to a virtual server. 
+      # mirror: 'no' #Options: no/yes
+      # per_flow_request_access_policy: #Specifies the Per-Request access policy for the virtual server.
+      # policies: 	#Specifies the policies for the virtual server.
+      # port: #Port of the virtual server. Required when state is present and the virtual server does not exist.
+      # port_translation: 'no' #Options: no/yes
+      # rate_limit:  #Virtual server rate limit (connections-per-second). Setting this to 0 disables the limit.
+      # rate_limit_dst_mask: 0  #	Specifies a mask, in bits, to be applied to the destination address as part of the rate limiting.
+      # rate_limit_mode: 'object' #Indicates whether the rate limit is applied per virtual object, per source address, per destination address, or some combination thereof. The default value is ‘object’, which does not use the source or destination address as part of the key.
+      # rate_limit_src_mask: 0 	#Specifies a mask, in bits, to be applied to the source address as part of the rate limiting. The default value is ‘0’, which is equivalent to using the entire address - ‘32’ in IPv4, or ‘128’ in IPv6.
+      # security_log_profiles: none  #Specifies the log profile applied to the virtual server.
+      # security_nat_policy: #Specify the Firewall NAT policies for the virtual server.
+      # serverssl_use_sni: yes/no #	When enabled, specifies whether SNI is enabled on the server-side SSL connection
+      # service_down_immediate_action: none #	Specifies the immediate action to take upon the receipt of the initial SYN packet if the availability status of the virtual server is Offline or Unavailable.
+      # source_port: #Specifies whether the system preserves the source port of the connection.Options: preserve/preserve-strict/change
+      # state: 'present' #virtual server state. Options: present/absent/enabled/disabled
+      # type: 'standard' 
+
+    - name: "VIP_107"   #The name of the virtual server.
+      partition: "Common" #The partition where the virtual server resides.
+      description: "Test-VIP creation" #A textual description of the virtual server.
+      destination: "192.168.100.17:80" #The IP address and port (e.g., 10.1.1.1:80) that the virtual server listens on.
+      mask: '255.255.255.255'   #The subnet mask for the destination IP.
+      source: '0.0.0.0/0'  #The source IP address range (e.g., 0.0.0.0/0) that the virtual server accepts connections from.
+      pool: "demo_pool"    #The name of the pool to which traffic is directed.
+      ip_protocol: 'tcp' #Ansible param ....Specifies the IP protocol for which you want the virtual server to direct traffic. Sample protocol names are tcp and udp.
+      snat: '/Common/test_snat_pool' #Options: automap/<name of snat pool>/none. Enable or disable SNAT automap for the virtual server. DEPRECATED - see Virtual Server Property Groups source-address-translation
+      
+
+      profiles:   
+        - name: "f5-tcp-lan" 
+          context: "clientside" #Protocol Profile (Client). 
+        - name: "f5-tcp-progressive"
+          context: "serverside"  #Protocol Profile (Server)
+        - name: "http"    #Default context=all applies
+        - name: "clientssl"
+          context: "clientside"  
+        - name: "serverssl" 
+          context: "serverside"  
+        - name: "request-log"       
+
+      ###################################################################################################################################
+      #                                 Optional - Advanced Configuration for VIP creation                                              #
+      #                         Uncomment the required configuration to include for VIP creation                                        #
+      ###################################################################################################################################
+
+
+      # address_translation: 'yes'   #Options: Yes/No. Default-Yes
+      # auto_last_hop: 'default'     #Options: default/enabled/disabled
+      # bypass_module_checks:    #Options: no/yes
+      # check_profiles: 'no'    #Options: yes/no
+      # disabled_vlans:   #List of VLANs to be disabled.
+      # enabled_vlans: #List of VLANs to enable.
+      # fallback_persistence_profile:  #Specifies a fallback persistence profile for the virtual server to use when the default persistence profile is not available.
+      # firewall_enforced_policy: #Applies the specified AFM policy to the virtual in an enforcing way.
+      # firewall_staged_policy: #Staged firewall policy.
+      # insert_metadata: #Options: no/yes
+      # ip_intelligence_policy:   #The name of the IP Intelligence policy to attach.
+      # irules: #	Specifies a list of rules to be applied in priority order.
+      # metadata: #Arbitrary key/value pairs you can attach to a virtual server. 
+      # mirror: 'no' #Options: no/yes
+      # per_flow_request_access_policy: #Specifies the Per-Request access policy for the virtual server.
+      # policies: 	#Specifies the policies for the virtual server.
+      # port: #Port of the virtual server. Required when state is present and the virtual server does not exist.
+      # port_translation: 'no' #Options: no/yes
+      # rate_limit:  #Virtual server rate limit (connections-per-second). Setting this to 0 disables the limit.
+      # rate_limit_dst_mask: 0  #	Specifies a mask, in bits, to be applied to the destination address as part of the rate limiting.
+      # rate_limit_mode: 'object' #Indicates whether the rate limit is applied per virtual object, per source address, per destination address, or some combination thereof. The default value is ‘object’, which does not use the source or destination address as part of the key.
+      # rate_limit_src_mask: 0 	#Specifies a mask, in bits, to be applied to the source address as part of the rate limiting. The default value is ‘0’, which is equivalent to using the entire address - ‘32’ in IPv4, or ‘128’ in IPv6.
+      # security_log_profiles: none  #Specifies the log profile applied to the virtual server.
+      # security_nat_policy: #Specify the Firewall NAT policies for the virtual server.
+      # serverssl_use_sni: yes/no #	When enabled, specifies whether SNI is enabled on the server-side SSL connection
+      # service_down_immediate_action: none #	Specifies the immediate action to take upon the receipt of the initial SYN packet if the availability status of the virtual server is Offline or Unavailable.
+      # source_port: #Specifies whether the system preserves the source port of the connection.Options: preserve/preserve-strict/change
+      # state: 'present' #virtual server state. Options: present/absent/enabled/disabled
+      # type: 'standard' 

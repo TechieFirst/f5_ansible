@@ -1,0 +1,44 @@
+############################################################################################################################
+#                                    Basic Configuration for Pool creation                                                  #
+#          Edit below configuration as per requirement (Comment out(preppend with #) for non-requird config)               #
+############################################################################################################################
+
+---
+pool_creation:  
+  pool: 
+    - name: 'test_pool_26'
+      partition: 'Common'
+      description: 'Test_pool_creation'
+      lb_method: 'round-robin'   #options:round-robin/ratio-member/dynamic-ratio-member/dynamic-ratio-node/fastest-app-response/fastest-node/.....
+
+###################################################################################################################################
+#                                 Optional - Advanced Configuration for Pool creation                                              #
+#                         Uncomment the required configuration to include for pool creation                                        #
+# ###################################################################################################################################
+      monitors: 'http' #The health monitor used to check the health of the pool members. It can be a path to a monitor object or a string with the monitor's name
+      reselect_tries: 0  #Sets the number of times the system tries to contact a pool member after a passive failure.
+      service_down_action : 'none'  #options: none/reset/drop/reselect
+      slow_ramp_time: 10  #Sets the ramp-up time (in seconds) to gradually ramp up the load on newly added or freshly detected up pool members.
+      min_up_members: 0 #Specifies the minimum number of pool members that must be up,otherwise, the system takes the action specified in the min-up-members-action option.
+      min_up_members_action: 'failover' #Options: failover/restart-all/reboot
+      min_up_members_checking: 'disabled' #Options: enabled/disabled
+      priority_group_activation: 0 #options: 0 to 65535
+
+    - name: 'test_pool_27'
+      partition: 'Common'
+      description: 'Test_pool_creation'
+      lb_method: 'ratio-member'   #options:round-robin/ratio-member/dynamic-ratio-member/dynamic-ratio-node/fastest-app-response/fastest-node/.....
+      
+###################################################################################################################################
+#                                 Optional - Advanced Configuration for Pool creation                                              #
+#                         Uncomment the required configuration to include for pool creation                                        #
+# ###################################################################################################################################
+      monitors: 'tcp' #The health monitor used to check the health of the pool members. It can be a path to a monitor object or a string with the monitor's name
+      reselect_tries: 0  #Sets the number of times the system tries to contact a pool member after a passive failure.
+      service_down_action : 'none'  #options: none/reset/drop/reselect
+      slow_ramp_time: 10  #Sets the ramp-up time (in seconds) to gradually ramp up the load on newly added or freshly detected up pool members.
+      min_up_members: 0 #Specifies the minimum number of pool members that must be up,otherwise, the system takes the action specified in the min-up-members-action option.
+      min_up_members_action: 'failover' #Options: failover/restart-all/reboot
+      min_up_members_checking: 'disabled' #Options: enabled/disabled
+      priority_group_activation: 0 #options: 0 to 65535
+
