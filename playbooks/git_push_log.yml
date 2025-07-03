@@ -2,8 +2,6 @@
 - name: Log push to Git
   hosts: localhost
   gather_facts: false
-  vars:
-    ansible_job_id: '25'
   tasks:
   - name: Ensure logs directory exists
     ansible.builtin.file:
