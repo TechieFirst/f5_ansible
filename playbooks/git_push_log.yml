@@ -1,0 +1,38 @@
+---
+- name: Ensure logs directory exists
+  ansible.builtin.file:
+    path: /tmp/awx-logs
+    state: directory
+
+- name: Write custom log
+  ansible.builtin.copy:
+    dest: "/tmp/awx-logs/job_{{ ansible_job_id }}.log"
+    content: |
+      Job ID: {{ ansible_job_id }}
+      Host: {{ inventory_hostname }}
+      Result: {{ ansible_date_time.iso8601 }}
+      Status: SUCCESS
+      F5 Config Applied: YES
+
+- name: Clone GitHub log repo
+  ansible.builtin.git:
+    repo: https://github.com/TechieFirst/f5_ansible.git
+    dest: /tmp/awx-logs-repo
+    version: main
+    force: yes
+    accept_hostkey: yes
+    key_file: /root/.ssh/id_rsa  # or use `credential` in AWX
+
+- name: Copy log file to repo
+  ansible.builtin.copy:
+    src: "/tmp/awx-logs/job_{{ ansible_job_id }}.log"
+    dest: "/tmp/awx-logs-repo/logs/job_{{ ansible_job_id }}.log"
+
+- name: Commit log to Git
+  ansible.builtin.shell: |
+    cd /tmp/awx-logs-repo
+    git config user.name "AWX Bot"
+    git config user.email "awx@hcllab.com"
+    git add logs/job_{{ ansible_job_id }}.log
+    git commit -m "Add log for Job {{ ansible_job_id }}"
+    git push
