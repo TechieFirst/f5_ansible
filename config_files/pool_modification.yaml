@@ -14,7 +14,7 @@ pool_modification:
     action: 
     - address: '10.0.0.103'
       port: '80'
-      state: 'add'
+      state: 'present'
     - address: '192.168.100.14'
       port: '80'
-      state: 'remove'
+      state: 'present'
