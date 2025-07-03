@@ -1,0 +1,20 @@
+---
+pool_modification:
+  - pool: 'test_pool_26'
+    partition: 'Common'
+    action:
+    - address: '10.0.0.103'
+      port: '80'
+      state: 'enabled'
+    - address: 'app01'
+      port: '80'
+      state: 'enabled'
+  - pool: 'test_pool_27'
+    partition: 'Common'
+    action: 
+    - address: '10.0.0.103'
+      port: '80'
+      state: 'add'
+    - address: '192.168.100.14'
+      port: '80'
+      state: 'remove'

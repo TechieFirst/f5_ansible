@@ -1,0 +1,9 @@
+---
+vip_validation:
+  partition: 'Common'
+  vip_name:   
+    - 'all'   # Enable 'all' for all vip status for the given partition
+    # - 'VIP_12'
+    # - 'VIP_20'
+    # - 'VIP_Test'
+    # - 'my_pool5'
