@@ -8,7 +8,7 @@ vip_creation:
     - name: "VIP_106"   #The name of the virtual server.
       partition: "Common" #The partition where the virtual server resides.
       description: "Test-VIP creation" #A textual description of the virtual server.
-      destination: "192.168.100.15:80" #The IP address and port (e.g., 10.1.1.1:80) that the virtual server listens on.
+      destination: "10.0.0.103:80" #The IP address and port (e.g., 10.1.1.1:80) that the virtual server listens on.
       mask: '255.255.255.255'   #The subnet mask for the destination IP.
       source: '0.0.0.0/0'  #The source IP address range (e.g., 0.0.0.0/0) that the virtual server accepts connections from.
       pool: "demo_pool"    #The name of the pool to which traffic is directed.
