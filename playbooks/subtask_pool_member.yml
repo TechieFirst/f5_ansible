@@ -1,0 +1,16 @@
+---
+- name: Pool Member update
+  block:
+  - name: Pool member update of {{ action_pool.address}} on {{ new_dict.pool }}
+    bigip_pool_member: 
+      partition: "{{ new_dict.partition }}"
+      pool: "{{ new_dict.pool }}"
+      provider: "{{ new_dict.provider }}"
+      address: "{{ action_pool.address}}"
+      port: "{{ action_pool.port}}"
+      state: "{{ action_pool.state  }}" 
+  rescue:
+  - name: Pool member update failure for {{ new_dict.pool }}
+    debug: 
+      msg: "Error updating pool member for {{ new_dict.pool }}"
+  notify: Config Sync (Manual Only)

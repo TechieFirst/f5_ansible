@@ -16,11 +16,10 @@
     vars_files:
       - ../config_files/vip_validation.yaml
     tags: always
-    collections:
-      f5networks.f5_modules
+
     tasks:
     - name: Run show sys failover command
-      f5networks.f5_modules.bigip_command:
+      bigip_command:
         commands:
           - "show sys failover"
         provider: "{{ provider }}"

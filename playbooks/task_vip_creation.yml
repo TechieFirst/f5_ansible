@@ -1,0 +1,15 @@
+---
+- name: Combine Server auth and VIP Data dict
+  set_fact:
+    new_dict: "{{ item | ansible.builtin.combine({'provider': provider }) }}"
+# - debug: msg="{{ new_dict }}"     
+
+- name: Create VIP
+  block:
+  - name: VIP creation state of  {{new_dict.name}}
+    bigip_virtual_server: "{{ new_dict }}"
+  rescue:
+  - name: Handle failure for {{ new_dict.name }}
+    debug: 
+      msg: "Error creating VIP - {{ new_dict.name  }}"
+  notify: Config Sync (Manual Only)

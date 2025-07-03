@@ -1,0 +1,20 @@
+---
+- name: Extract availability state for VIP
+  block:
+    - name: VIP state of {{vip}}
+      set_fact:
+        vip_result: "VIP State of {{ vip }} - {{ (vip_list.virtual_servers 
+                      | selectattr('name', 'search', vip ) 
+                      | selectattr('full_path', 'search', partition ) |list |first).availability_status }}"
+  rescue:
+    - name: Handle failure for {{ vip }}
+      set_fact:
+        vip_result: "VIP name - {{ vip }} invalid"
+
+
+- name: Write result to log
+  lineinfile:
+    path: "{{ log_file }}"
+    line: >
+          "{{ '%Y-%m-%d %H:%M:%S' | strftime }} - {{ vip_result }}"
+    insertafter: EOF
